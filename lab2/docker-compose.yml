@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  concurrent_container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - shared_volume:/shared_volume
+      - lock:/shared_volume/lock
+
+volumes:
+  shared_volume:
+  lock:
