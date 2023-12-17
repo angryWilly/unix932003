@@ -57,4 +57,6 @@ while true; do
 
   delete_file
 
+  sleep 1
+  
 done
