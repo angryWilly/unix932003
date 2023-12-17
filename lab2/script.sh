@@ -28,8 +28,7 @@ create_file() {
 
   find_first_available_filename
 
-  digits=$(echo "$filename" | grep -oE '[0-9]+')
-  index=$(echo "$digits" | sed 's/^0*//')
+  index=$(echo "$filename" | sed 's/^0*//')
 
   text="$container_id $index"
   echo "$text" > "$shared_dir/$filename"
