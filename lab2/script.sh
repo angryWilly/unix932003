@@ -62,7 +62,7 @@ while true; do
 
   sleep 1
 
-  delete_file $filename
+  delete_file "$filename"
 
   sleep 1
 
