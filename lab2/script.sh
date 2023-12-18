@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+set -u
+
 if [ ! -e "/shared_volume/lock/lock_file.lock" ]; then
   echo > "/shared_volume/lock/lock_file.lock"
 fi
@@ -13,9 +15,11 @@ generate_container_id() {
 
 find_first_available_filename() {
   local index=1
+  local filename
   while true; do
     filename=$(printf "%03d" $index)
     if [ ! -f "$shared_dir/$filename" ]; then
+      echo "$filename"
       break
     fi
     ((index++))
@@ -23,10 +27,12 @@ find_first_available_filename() {
 }
 
 create_file() {
+  local filename
+
   exec {fd}>$lock_file
   flock -s "$fd"
 
-  find_first_available_filename
+  filename=$(find_first_available_filename)
 
   index=$(echo "$filename" | sed 's/^0*//')
 
@@ -34,9 +40,13 @@ create_file() {
   echo "$text" > "$shared_dir/$filename"
 
   flock -u "$fd"
+
+  echo "$filename"
 }
 
 delete_file() {
+  local filename=$1
+
   if [ -f "$shared_dir/$filename" ]; then
     text=$(<"$shared_dir/$filename")
 
@@ -50,12 +60,12 @@ delete_file() {
 container_id=$(generate_container_id)
 while true; do
 
-  create_file
+  filename=$(create_file)
 
   sleep 1
 
-  delete_file
+  delete_file $filename
 
   sleep 1
-  
+
 done
