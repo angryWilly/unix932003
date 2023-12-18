@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-set -u
-
 if [ ! -e "/shared_volume/lock/lock_file.lock" ]; then
   echo > "/shared_volume/lock/lock_file.lock"
 fi
