@@ -28,7 +28,7 @@ create_file() {
   local filename
 
   exec {fd}>$lock_file
-  flock -s "$fd"
+  flock "$fd"
 
   filename=$(find_first_available_filename)
 
@@ -45,13 +45,10 @@ create_file() {
 delete_file() {
   local filename=$1
 
-  if [ -f "$shared_dir/$filename" ]; then
-    text=$(<"$shared_dir/$filename")
+  text=$(<"$shared_dir/$filename")
+  rm -f "$shared_dir/$filename"
 
-    rm -f "$shared_dir/$filename"
-
-    echo "Container with id: $container_id deleted file: $filename that had text: $text"
-  fi
+  echo "Container with id: $container_id deleted file: $filename that had text: $text"
 }
 
 
@@ -59,10 +56,11 @@ container_id=$(generate_container_id)
 while true; do
 
   filename=$(create_file)
+  echo "Created: $filename by container with id: $container_id"
 
   sleep 1
 
-  delete_file "$filename"
+  delete_file $filename
 
   sleep 1
 
